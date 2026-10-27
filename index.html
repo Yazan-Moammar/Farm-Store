@@ -507,7 +507,7 @@ function renderCheckout(){
     try {
       const ref = await addDoc(collection(db, "orders"), orderData);
       
-      // التعديل هنا: آخر 4 أرقام/حروف من الـ ID
+      // رقم الطلب: آخر 4 حروف من ID فايربيز
       const orderNumber = ref.id.slice(-4).toUpperCase();
       
       const waMsg = `طلب جديد رقم: ${orderNumber}\n\n` +
@@ -523,7 +523,6 @@ function renderCheckout(){
         
       const waUrl = waLink(waMsg);
 
-      // التعديل هنا: تصغير حجم الشيك
       $("#checkoutContent").innerHTML = `
         <div style="text-align:center; padding: 20px 0;">
           <div style="width:60px; height:60px; background:rgba(22, 163, 74, 0.2); color:#4ade80; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
