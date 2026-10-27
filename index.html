@@ -9,102 +9,45 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
-
 :root[data-theme="dark"] {
-  --bg: #0A0A0A;
-  --surface: #1A1A1A;
-  --surface-hover: #262626;
-  --text: #F3F4F6;
-  --text-muted: #9CA3AF;
-  --border: #2D2D2D;
-  
-  --primary: #D4AF37;      
-  --primary-light: #FDE047; 
-  --primary-bg: rgba(212, 175, 55, 0.15); 
-  --accent: #D4AF37;
-  
+  --bg: #0A0A0A; --surface: #1A1A1A; --surface-hover: #262626; --text: #F3F4F6; --text-muted: #9CA3AF; --border: #2D2D2D;
+  --primary: #D4AF37; --primary-light: #FDE047; --primary-bg: rgba(212, 175, 55, 0.15); --accent: #D4AF37;
   --grad-btn: linear-gradient(135deg, #FDE047 0%, #D4AF37 50%, #A16207 100%);
   --grad-hero: linear-gradient(180deg, #0A0A0A 0%, #171717 100%);
-  --shadow: 0 4px 20px rgba(0,0,0,0.5);
-  --glow: 0 0 40px rgba(212, 175, 55, 0.3);
+  --shadow: 0 4px 20px rgba(0,0,0,0.5); --glow: 0 0 40px rgba(212, 175, 55, 0.3);
 }
-
 :root[data-theme="light"] {
-  --bg: #F8FAFC;
-  --surface: #FFFFFF;
-  --surface-hover: #F1F5F9;
-  --text: #0F172A;
-  --text-muted: #64748B;
-  --border: #E2E8F0;
-  
-  --primary: #0284C7;       
-  --primary-light: #38BDF8;
-  --primary-bg: rgba(2, 132, 199, 0.1);
-  --accent: #0EA5E9;
-  
+  --bg: #F8FAFC; --surface: #FFFFFF; --surface-hover: #F1F5F9; --text: #0F172A; --text-muted: #64748B; --border: #E2E8F0;
+  --primary: #0284C7; --primary-light: #38BDF8; --primary-bg: rgba(2, 132, 199, 0.1); --accent: #0EA5E9;
   --grad-btn: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
   --grad-hero: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
-  --shadow: 0 4px 20px rgba(0,0,0,0.05);
-  --glow: 0 0 40px rgba(56, 189, 248, 0.3);
+  --shadow: 0 4px 20px rgba(0,0,0,0.05); --glow: 0 0 40px rgba(56, 189, 248, 0.3);
 }
-
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color: transparent;}
 html { scroll-behavior: smooth; }
-body{
-  font-family: 'Tajawal', sans-serif;
-  color: var(--text);
-  line-height: 1.6;
-  background: var(--bg);
-  overflow-x: hidden;
-  transition: background 0.4s ease, color 0.4s ease;
-}
-img{max-width:100%;display:block;}
-a{color:inherit;text-decoration:none;}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+body{ font-family: 'Tajawal', sans-serif; color: var(--text); line-height: 1.6; background: var(--bg); overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
+img{max-width:100%;display:block;} a{color:inherit;text-decoration:none;} button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 .container{max-width:1200px;margin:0 auto;padding:0 20px; position: relative; z-index: 2;}
-
-
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
 .reveal.active { opacity: 1; transform: translateY(0); }
 
-
-.bg-animations {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
-}
-.floating-icon {
-  position: absolute; font-size: 40px; opacity: 0.05;
-  animation: floatAround 20s linear infinite;
-}
+/* الملصقات المتحركة في الخلفية */
+.bg-animations { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.floating-icon { position: absolute; font-size: 40px; opacity: 0.05; animation: floatAround 20s linear infinite; }
 :root[data-theme="light"] .floating-icon { opacity: 0.08; }
 .floating-icon:nth-child(1) { top: 20%; left: -10%; animation-duration: 25s; }
 .floating-icon:nth-child(2) { top: 60%; left: -10%; font-size: 60px; animation-duration: 35s; animation-delay: 5s; }
 .floating-icon:nth-child(3) { top: 40%; left: -10%; font-size: 30px; animation-duration: 20s; animation-delay: 10s; }
 .floating-icon:nth-child(4) { top: 80%; left: -10%; font-size: 50px; animation-duration: 30s; animation-delay: 2s; }
+@keyframes floatAround { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(120vw) rotate(360deg); } }
 
-@keyframes floatAround {
-  0% { transform: translateX(0) rotate(0deg); }
-  100% { transform: translateX(120vw) rotate(360deg); }
-}
-
-
-.top-bar{
-  background: var(--surface);
-  color: var(--text-muted);
-  padding: 8px 0; font-size: 12px; font-weight: 700;
-  overflow: hidden; white-space: nowrap; display: flex; align-items: center;
-  border-bottom: 1px solid var(--border);
-}
+.top-bar{ background: var(--surface); color: var(--text-muted); padding: 8px 0; font-size: 12px; font-weight: 700; overflow: hidden; white-space: nowrap; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
 .marquee-content { display: flex; gap: 40px; animation: scrollMarquee 25s linear infinite; padding-right: 40px; }
 .marquee-item { display: flex; align-items: center; gap: 6px; }
 .marquee-item svg { width: 14px; height: 14px; color: var(--primary); }
 @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
 
-.header{
-  background: var(--surface);
-  position: sticky; top: 0; z-index: 100;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.4s;
-}
+.header{ background: var(--surface); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); transition: background 0.4s; }
 .header-inner{display: flex; align-items: center; justify-content: space-between; padding: 12px 0;}
 .brand{display: flex; align-items: center; gap: 12px;}
 .brand-logo{ width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
@@ -112,95 +55,40 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .brand-text span{font-size: 12px; color: var(--text-muted); font-weight: 500;}
 
 .header-actions{display: flex; align-items: center; gap: 8px;}
-.icon-btn{
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--bg); display: flex; align-items: center; justify-content: center;
-  color: var(--text); border: 1px solid var(--border); transition: all 0.2s;
-}
+.icon-btn{ width: 44px; height: 44px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--text); border: 1px solid var(--border); transition: all 0.2s; }
 .icon-btn:hover { background: var(--surface-hover); }
 .icon-btn svg{width: 20px; height: 20px;}
-
-
 .theme-toggle { color: var(--primary); }
 
-
-.cart-btn{ background: var(--grad-btn); color: #fff; border: none; }
+.cart-btn{ background: var(--grad-btn); color: #fff; border: none; position: relative; }
 .cart-btn svg{ color: #fff; }
 [data-theme="light"] .cart-btn { color: #fff; }
 [data-theme="dark"] .cart-btn { color: #000; }
 [data-theme="dark"] .cart-btn svg { color: #000; }
 
-.cart-count{
-  position: absolute; top: -4px; right: -4px;
-  background: #EF4444; color: #fff;
-  font-size: 11px; font-weight: 900; width: 20px; height: 20px;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  border: 2px solid var(--surface);
-  animation: pulseCount 2s infinite;
-}
-@keyframes pulseCount {
-  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-
+.cart-count{ position: absolute; top: -4px; right: -4px; background: #EF4444; color: #fff; font-size: 11px; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--surface); animation: pulseCount 2s infinite; }
+@keyframes pulseCount { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
 .nav-wrapper{padding: 8px 0; overflow-x: auto; scrollbar-width: none; background: var(--surface); border-bottom: 1px solid var(--border);}
 .nav-wrapper::-webkit-scrollbar{display: none;}
 .nav{display: flex; gap: 8px; min-width: max-content;}
-.nav a{
-  font-size: 14px; font-weight: 700; color: var(--text-muted);
-  padding: 8px 16px; border-radius: 20px; transition: all 0.2s;
-  display: flex; align-items: center; gap: 6px;
-}
+.nav a{ font-size: 14px; font-weight: 700; color: var(--text-muted); padding: 8px 16px; border-radius: 20px; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
 .nav a svg{width: 16px; height: 16px;}
 .nav a.active, .nav a:hover{ background: var(--primary-bg); color: var(--primary); }
 
-
-.hero{
-  position: relative; padding: 90px 20px 70px; text-align: center;
-  background: var(--grad-hero); border-radius: 0 0 30px 30px;
-  margin-bottom: 40px; overflow: hidden; border-bottom: 1px solid var(--border);
-  transition: background 0.4s;
-}
-
-.sun-glow {
-  position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
-  width: 200px; height: 200px; background: var(--primary);
-  border-radius: 50%; filter: blur(60px); z-index: 0;
-  transition: opacity 0.4s;
-}
+.hero{ position: relative; padding: 90px 20px 70px; text-align: center; background: var(--grad-hero); border-radius: 0 0 30px 30px; margin-bottom: 40px; overflow: hidden; border-bottom: 1px solid var(--border); transition: background 0.4s; }
+.sun-glow { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; background: var(--primary); border-radius: 50%; filter: blur(60px); z-index: 0; transition: opacity 0.4s; }
 [data-theme="dark"] .sun-glow { opacity: 0.3; animation: sunPulse 3s ease-in-out infinite alternate; }
 [data-theme="light"] .sun-glow { opacity: 0; }
-
-@keyframes sunPulse {
-  0% { opacity: 0.2; transform: translateX(-50%) scale(0.9); }
-  100% { opacity: 0.6; transform: translateX(-50%) scale(1.1); }
-}
-
-.hero::before {
-  content: 'مزرعة عيال علي';
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  font-size: 15vw; font-weight: 900; color: var(--text);
-  opacity: 0.02; white-space: nowrap; pointer-events: none; z-index: 0;
-}
-
+@keyframes sunPulse { 0% { opacity: 0.2; transform: translateX(-50%) scale(0.9); } 100% { opacity: 0.6; transform: translateX(-50%) scale(1.1); } }
+.hero::before { content: 'مزرعة عيال علي'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 15vw; font-weight: 900; color: var(--text); opacity: 0.02; white-space: nowrap; pointer-events: none; z-index: 0; }
 .hero .container { position: relative; z-index: 2; }
-.hero-logo{
-  width: 140px; height: 140px; border-radius: 50%; object-fit: cover;
-  border: 4px solid var(--primary); margin: 0 auto 20px;
-  box-shadow: var(--glow);
-}
+.hero-logo{ width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary); margin: 0 auto 20px; box-shadow: var(--glow); }
 .hero h2{ font-size: 38px; font-weight: 900; color: var(--text); line-height: 1.2; margin-bottom: 12px; }
 .hero p{ font-size: 16px; color: var(--text-muted); margin-bottom: 30px; max-width: 600px; margin-inline: auto; }
 .hero-actions{display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;}
 
-
-.btn{
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700;
-  transition: all 0.2s;
-}
+.btn{ display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 700; transition: all 0.2s; }
 .btn:active { transform: scale(0.98); }
 .btn-primary{ background: var(--grad-btn); color: #000; }
 [data-theme="light"] .btn-primary { color: #fff; }
@@ -209,35 +97,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .btn-outline:hover{ background: var(--primary-bg); }
 .btn svg{width: 18px; height: 18px;}
 
-
 .section{ padding: 50px 0; position: relative; z-index: 2;}
 .section-head{ text-align: center; margin-bottom: 30px; }
 .section-head h2{ font-size: 28px; font-weight: 900; color: var(--primary); }
 .section-head p { font-size: 15px; color: var(--text-muted); margin-top: 8px; }
 
-
 .filters-wrapper { display: flex; justify-content: center; margin-bottom: 24px; }
 .filters{ display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
 .filters::-webkit-scrollbar{ display: none; }
-.filter-btn{
-  white-space: nowrap; padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: 700;
-  background: var(--surface); border: 1px solid var(--border); color: var(--text-muted);
-  transition: all 0.2s; flex-shrink: 0;
-}
+.filter-btn{ white-space: nowrap; padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: 700; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); transition: all 0.2s; flex-shrink: 0; }
 .filter-btn.active{ background: var(--primary); color: #fff; border-color: transparent; }
 
 .grid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.card{
-  background: var(--surface); border-radius: 16px; padding: 12px;
-  display: flex; flex-direction: column; border: 1px solid var(--border);
-  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-}
+.card{ background: var(--surface); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; border: 1px solid var(--border); transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s; }
 .card:hover{ transform: translateY(-6px); border-color: var(--primary); box-shadow: var(--shadow); }
-.card-img{
-  width: 100%; aspect-ratio: 1; background: var(--bg); border-radius: 12px;
-  padding: 12px; cursor: pointer; margin-bottom: 12px; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-}
+.card-img{ width: 100%; aspect-ratio: 1; background: var(--bg); border-radius: 12px; padding: 12px; cursor: pointer; margin-bottom: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .card-img img{ width: 100%; height: 100%; object-fit: contain; }
 .card-body{ text-align: center; display: flex; flex-direction: column; flex: 1; }
 .card-cat{ font-size: 11px; font-weight: 700; color: var(--primary); background: var(--primary-bg); padding: 4px 10px; border-radius: 20px; align-self: center; margin-bottom: 8px; }
@@ -245,7 +119,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .card-price{ font-size: 18px; font-weight: 900; margin-bottom: 12px; color: var(--primary); }
 .card-actions{ display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
 .card-actions .btn{ width: 100%; padding: 10px; font-size: 13px; border-radius: 8px; }
-
 
 .about-section { padding: 60px 0; background: var(--surface); border-radius: 30px; margin: 20px 0; border: 1px solid var(--border);}
 .about-container { display: flex; flex-direction: column; align-items: center; gap: 24px; max-width: 900px; margin: 0 auto; padding: 0 20px; }
@@ -257,12 +130,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .about-image-wrap { width: 200px; height: 200px; flex-shrink: 0; }
 .about-image-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; border: 4px solid var(--primary); }
 
-
 .payments-grid{ display: grid; grid-template-columns: 1fr; gap: 16px; max-width: 700px; margin: 0 auto; }
-.pay-card{
-  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-  padding: 20px; display: flex; align-items: center; gap: 16px; transition: border-color 0.2s;
-}
+.pay-card{ background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; transition: border-color 0.2s; }
 .pay-card:hover { border-color: var(--primary); }
 .pay-icon{ width: 50px; height: 50px; border-radius: 12px; background: var(--primary-bg); color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .pay-icon svg { width: 24px; height: 24px; }
@@ -281,9 +150,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .c-text p{ font-size: 13px; color: var(--text-muted); }
 .c-text .num{ font-size: 15px; font-weight: 800; color: var(--primary); direction: ltr; }
 
-
 .footer{ background: var(--surface); color: var(--text-muted); text-align: center; padding: 24px; font-size: 14px; font-weight: 500; margin-top: 40px; border-top: 1px solid var(--border); }
-
 
 .overlay{ position: fixed; inset: 0; background: rgba(0,0,0,0.7); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 200; }
 .overlay.show{ opacity: 1; pointer-events: auto; }
@@ -362,13 +229,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .pd-img{ flex: 1; margin-bottom: 0; }
   .pd-info{ flex: 1; }
 }
-@media (min-width: 1024px) {
-  .grid{ grid-template-columns: repeat(4, 1fr); }
-}
+@media (min-width: 1024px) { .grid{ grid-template-columns: repeat(4, 1fr); } }
 </style>
 </head>
 <body>
-
 
 <div class="bg-animations">
   <div class="floating-icon">🐄</div>
@@ -440,11 +304,8 @@ function applyConfig(){
   ["#contactFb"].forEach(s => { if($(s)) $(s).href = CONFIG.facebook; });
 }
 
-
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const htmlEl = document.documentElement;
-
-
 const savedTheme = localStorage.getItem('farm_theme') || 'dark';
 htmlEl.setAttribute('data-theme', savedTheme);
 updateThemeIcon(savedTheme);
@@ -645,7 +506,9 @@ function renderCheckout(){
 
     try {
       const ref = await addDoc(collection(db, "orders"), orderData);
-      const orderNumber = ref.id.slice(0, 8).toUpperCase();
+      
+      // التعديل هنا: آخر 4 أرقام/حروف من الـ ID
+      const orderNumber = ref.id.slice(-4).toUpperCase();
       
       const waMsg = `طلب جديد رقم: ${orderNumber}\n\n` +
         `الاسم: ${orderData.customerName}\n` +
@@ -660,16 +523,17 @@ function renderCheckout(){
         
       const waUrl = waLink(waMsg);
 
+      // التعديل هنا: تصغير حجم الشيك
       $("#checkoutContent").innerHTML = `
         <div style="text-align:center; padding: 20px 0;">
-          <div style="width:70px; height:70px; background:rgba(22, 163, 74, 0.2); color:#4ade80; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
-            <i data-lucide="check" style="width:32px; height:32px;"></i>
+          <div style="width:60px; height:60px; background:rgba(22, 163, 74, 0.2); color:#4ade80; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+            <i data-lucide="check" style="width:28px; height:28px;"></i>
           </div>
           <h2 style="color:#4ade80; margin-bottom:8px; font-size:22px;">تم حفظ طلبك بنجاح!</h2>
-          <p style="color:var(--text-muted); font-weight:700; font-size:16px; margin-bottom:16px;">رقم الطلب: <b style="color:var(--primary);">#${orderNumber}</b></p>
-          <p style="color:var(--text); margin-bottom:20px; font-size:14px; line-height:1.6;">تم تسجيل طلبك في النظام. اضغط بالأسفل لإرسال التفاصيل عبر واتساب لتأكيد الطلب وترتيب الدفع.</p>
+          <p style="color:var(--text-muted); font-weight:700; font-size:16px; margin-bottom:16px;">رقم الطلب: <b style="color:var(--primary); font-size:20px;">#${orderNumber}</b></p>
+          <p style="color:var(--text); margin-bottom:20px; font-size:14px; line-height:1.6;">تم تسجيل طلبك في النظام. اضغط بالأسفل لإرسال التفاصيل عبر الواتساب لتأكيد الطلب وترتيب الدفع.</p>
           <a href="${waUrl}" target="_blank" class="btn" style="background:#25D366; color:#fff; width:100%; text-decoration:none; font-size:16px; padding:14px;">
-            <i data-lucide="message-circle"></i> إرسال الطلب عبر واتساب
+            <i data-lucide="message-circle"></i> إرسال الطلب عبر الواتساب
           </a>
           <button onclick="closeModal('checkoutModal')" class="btn" style="background:var(--bg); color:var(--text); width:100%; margin-top:8px; font-size:14px; border:1px solid var(--border);">إغلاق</button>
         </div>
@@ -782,7 +646,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     <div class="header-actions">
       <button class="icon-btn theme-toggle" id="themeToggleBtn" aria-label="تغيير الوضع"></button>
       <button class="icon-btn" id="searchBtn" aria-label="بحث"><i data-lucide="search"></i></button>
-      <button class="icon-btn cart-btn" id="cartBtn" aria-label="سلة" style="position:relative;">
+      <button class="icon-btn cart-btn" id="cartBtn" aria-label="سلة">
         <i data-lucide="shopping-cart"></i>
         <span class="cart-count" id="cartCount">0</span>
       </button>
