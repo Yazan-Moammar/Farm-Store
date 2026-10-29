@@ -30,8 +30,6 @@ img{max-width:100%;display:block;} a{color:inherit;text-decoration:none;} button
 .container{max-width:1200px;margin:0 auto;padding:0 20px; position: relative; z-index: 2;}
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
 .reveal.active { opacity: 1; transform: translateY(0); }
-
-/* الملصقات المتحركة في الخلفية */
 .bg-animations { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .floating-icon { position: absolute; font-size: 40px; opacity: 0.05; animation: floatAround 20s linear infinite; }
 :root[data-theme="light"] .floating-icon { opacity: 0.08; }
@@ -53,19 +51,16 @@ img{max-width:100%;display:block;} a{color:inherit;text-decoration:none;} button
 .brand-logo{ width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
 .brand-text h1{font-size: 20px; font-weight: 900; color: var(--primary); line-height: 1.1;}
 .brand-text span{font-size: 12px; color: var(--text-muted); font-weight: 500;}
-
 .header-actions{display: flex; align-items: center; gap: 8px;}
 .icon-btn{ width: 44px; height: 44px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--text); border: 1px solid var(--border); transition: all 0.2s; }
 .icon-btn:hover { background: var(--surface-hover); }
 .icon-btn svg{width: 20px; height: 20px;}
 .theme-toggle { color: var(--primary); }
-
 .cart-btn{ background: var(--grad-btn); color: #fff; border: none; position: relative; }
 .cart-btn svg{ color: #fff; }
 [data-theme="light"] .cart-btn { color: #fff; }
 [data-theme="dark"] .cart-btn { color: #000; }
 [data-theme="dark"] .cart-btn svg { color: #000; }
-
 .cart-count{ position: absolute; top: -4px; right: -4px; background: #EF4444; color: #fff; font-size: 11px; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--surface); animation: pulseCount 2s infinite; }
 @keyframes pulseCount { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
@@ -243,7 +238,7 @@ img{max-width:100%;display:block;} a{color:inherit;text-decoration:none;} button
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, serverTimestamp, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4msgJjccYRqkwchWFDuwnYR49B2DVcHk",
@@ -304,6 +299,7 @@ function applyConfig(){
   ["#contactFb"].forEach(s => { if($(s)) $(s).href = CONFIG.facebook; });
 }
 
+// ============ إعدادات الثيم (ليلي/نهاري) ============
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const htmlEl = document.documentElement;
 const savedTheme = localStorage.getItem('farm_theme') || 'dark';
@@ -360,10 +356,26 @@ function updateCartUI(){
   $("#cartTotal").textContent = fmt(cart.reduce((s,i)=>s+i.price*i.qty,0));
 
   const body = $("#drawerBody");
-  if(cart.length===0){
+  let topHtml = "";
+
+  const pending = JSON.parse(localStorage.getItem("pending_order"));
+  if (pending && pending.status !== "approved") {
+    let btnText = pending.status === "pending_receipt" ? "اضغط هنا لرفع الإيصال" : "جاري مراجعة الإيصال...";
+    let btnColor = pending.status === "pending_receipt" ? "#eab308" : "#3b82f6";
+    let title = pending.status === "pending_receipt" ? "لديك طلب ينتظر الإيصال!" : "طلبك قيد المراجعة";
+    
+    topHtml = `
+      <div style="background:rgba(0,0,0,0.05); border:2px dashed ${btnColor}; padding:15px; border-radius:15px; margin-bottom:15px; text-align:center;">
+        <p style="color:${btnColor}; font-weight:800; font-size:14px; margin-bottom:8px;">${title} (طلب #${pending.number})</p>
+        <button onclick="openPendingOrder()" class="btn" style="width:100%; padding:10px; background:${btnColor}; color:#fff;">${btnText}</button>
+      </div>
+    `;
+  }
+
+  if(cart.length===0 && !topHtml){
     body.innerHTML = `<div style="text-align:center; padding:40px 20px; color:var(--text-muted);"><i data-lucide="shopping-bag" style="width:40px;height:40px;margin:0 auto 12px;opacity:0.3;"></i><p style="font-size:16px;font-weight:700">السلة فارغة</p></div>`;
   } else {
-    body.innerHTML = cart.map(i=>`
+    body.innerHTML = topHtml + cart.map(i=>`
       <div class="cart-item">
         <img src="${i.img}" onerror="this.src='${fallbackImg}'">
         <div class="ci-info">
@@ -506,8 +518,6 @@ function renderCheckout(){
 
     try {
       const ref = await addDoc(collection(db, "orders"), orderData);
-      
-      // رقم الطلب: آخر 4 حروف من ID فايربيز
       const orderNumber = ref.id.slice(-4).toUpperCase();
       
       const waMsg = `طلب جديد رقم: ${orderNumber}\n\n` +
@@ -523,6 +533,10 @@ function renderCheckout(){
         
       const waUrl = waLink(waMsg);
 
+      localStorage.setItem("pending_order", JSON.stringify({ id: ref.id, number: orderNumber, waMsg: waMsg, pay: f.pay.value, status: "pending_receipt" }));
+
+      const isOnlinePay = ["instapay", "vodafone"].includes(f.pay.value);
+
       $("#checkoutContent").innerHTML = `
         <div style="text-align:center; padding: 20px 0;">
           <div style="width:60px; height:60px; background:rgba(22, 163, 74, 0.2); color:#4ade80; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
@@ -530,11 +544,27 @@ function renderCheckout(){
           </div>
           <h2 style="color:#4ade80; margin-bottom:8px; font-size:22px;">تم حفظ طلبك بنجاح!</h2>
           <p style="color:var(--text-muted); font-weight:700; font-size:16px; margin-bottom:16px;">رقم الطلب: <b style="color:var(--primary); font-size:20px;">#${orderNumber}</b></p>
-          <p style="color:var(--text); margin-bottom:20px; font-size:14px; line-height:1.6;">تم تسجيل طلبك في النظام. اضغط بالأسفل لإرسال التفاصيل عبر الواتساب لتأكيد الطلب وترتيب الدفع.</p>
-          <a href="${waUrl}" target="_blank" class="btn" style="background:#25D366; color:#fff; width:100%; text-decoration:none; font-size:16px; padding:14px;">
-            <i data-lucide="message-circle"></i> إرسال الطلب عبر الواتساب
-          </a>
-          <button onclick="closeModal('checkoutModal')" class="btn" style="background:var(--bg); color:var(--text); width:100%; margin-top:8px; font-size:14px; border:1px solid var(--border);">إغلاق</button>
+          
+          ${isOnlinePay ? `
+            <div style="background:var(--surface); border:1px solid var(--border); padding:15px; border-radius:15px; text-align:right; margin-bottom:20px;">
+              <p style="font-size:14px; font-weight:800; color:var(--text); margin-bottom:10px;">الخطوة الأخيرة: لتأكيد الطلب، يرجى رفع صورة إيصال التحويل.</p>
+              <div class="form-group">
+                <label>رقم العملية (اختياري)</label>
+                <input type="text" id="receiptNumber" placeholder="مثال: 123456789">
+              </div>
+              <div class="form-group">
+                <label>صورة الإيصال *</label>
+                <input type="file" id="receiptImage" accept="image/*" style="padding:10px; background:var(--bg);" onchange="document.getElementById('uploadBtn').click();">
+              </div>
+              <button onclick="uploadReceipt('${ref.id}', '${orderNumber}', '${waMsg.replace(/'/g, "\\'")}')" class="btn btn-primary" id="uploadBtn" style="width:100%; margin-top:10px;">تأكيد ورفع الإيصال</button>
+            </div>
+          ` : `
+            <p style="color:var(--text); margin-bottom:20px; font-size:14px; line-height:1.6;">تم تسجيل طلبك في النظام. اضغط بالأسفل لإرسال التفاصيل عبر الواتساب لتأكيد الطلب.</p>
+            <a href="${waUrl}" target="_blank" class="btn" style="background:#25D366; color:#fff; width:100%; text-decoration:none; font-size:16px; padding:14px; margin-bottom:8px;">
+              <i data-lucide="message-circle"></i> إرسال الطلب عبر واتساب
+            </a>
+          `}
+          <button onclick="closeModal('checkoutModal')" class="btn" style="background:var(--bg); color:var(--text); width:100%; font-size:14px; border:1px solid var(--border);">إغلاق</button>
         </div>
       `;
       lucide.createIcons();
@@ -548,6 +578,115 @@ function renderCheckout(){
     }
   });
 }
+
+window.uploadReceipt = async function(orderId, orderNum, waMsg) {
+  const fileInput = document.getElementById("receiptImage");
+  const receiptNumInput = document.getElementById("receiptNumber");
+  const btn = document.getElementById("uploadBtn");
+
+  if (!fileInput.files || fileInput.files.length === 0) {
+    alert("الرجاء اختيار صورة الإيصال أولاً.");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const receiptNum = receiptNumInput ? receiptNumInput.value.trim() : "";
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert("حجم الصورة كبير جداً، يجب أن يكون أقل من 5 ميجابايت.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "جارٍ رفع الصورة... (لا تغلق الصفحة)";
+
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
+    const IMGBB_API_KEY = "8b068b36c25c1be179c0d9a0766fd62b"; 
+
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { 
+      method: "POST", 
+      body: formData 
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error("فشل الرفع: " + (data.error ? data.error.message : "خطأ غير معروف"));
+    }
+
+    const downloadURL = data.data.url;
+
+    await updateDoc(doc(db, "orders", orderId), {
+      receiptURL: downloadURL,
+      receiptNumber: receiptNum,
+      paymentStatus: "pending_approval"
+    });
+
+    const pending = JSON.parse(localStorage.getItem("pending_order"));
+    if (pending) {
+      pending.status = "pending_approval";
+      localStorage.setItem("pending_order", JSON.stringify(pending));
+    }
+
+    document.querySelector("#checkoutContent div").innerHTML = `
+      <div style="width:60px; height:60px; background:rgba(59, 130, 246, 0.2); color:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+        <i data-lucide="clock" style="width:28px; height:28px;"></i>
+      </div>
+      <h2 style="color:#3b82f6; margin-bottom:8px; font-size:22px;">تم رفع الإيصال بنجاح</h2>
+      <p style="color:var(--text-muted); font-weight:700; font-size:16px; margin-bottom:20px;">طلبك #${orderNum} بانتظار موافقة الإدارة.</p>
+      <a href="${waLink(waMsg)}" target="_blank" class="btn" style="background:#25D366; color:#fff; width:100%; text-decoration:none; font-size:16px; padding:14px; margin-bottom:8px;">
+        <i data-lucide="message-circle"></i> إرسال تفاصيل الطلب عبر واتساب
+      </a>
+      <button onclick="closeModal('checkoutModal')" class="btn" style="background:var(--bg); color:var(--text); width:100%; font-size:14px; border:1px solid var(--border);">إغلاق</button>
+    `;
+    lucide.createIcons();
+
+  } catch (error) {
+    console.error("خطأ في الرفع:", error);
+    alert("تفاصيل الخطأ: " + error.message);
+    btn.disabled = false;
+    btn.textContent = "تأكيد ورفع الإيصال";
+  }
+};
+
+window.openPendingOrder = function() {
+  const pending = JSON.parse(localStorage.getItem("pending_order"));
+  if (!pending) return;
+  
+  let contentHtml = "";
+  
+  if (pending.status === "pending_receipt") {
+    contentHtml = `
+      <div style="width:60px; height:60px; background:rgba(234, 179, 8, 0.2); color:#eab308; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;"><i data-lucide="clock"></i></div>
+      <h2 style="color:#eab308; margin-bottom:8px; font-size:22px;">طلبك ينتظر الإيصال</h2>
+      <p style="color:var(--text-muted); font-weight:700; font-size:16px; margin-bottom:16px;">رقم الطلب: <b style="color:var(--primary); font-size:20px;">#${pending.number}</b></p>
+      <p style="color:var(--text); margin-bottom:20px; font-size:14px; line-height:1.6;">لم يتم رفع إيصال التحويل بعد. يرجى رفع الإيصال لتأكيد طلبك.</p>
+      <div style="background:var(--surface); border:1px solid var(--border); padding:15px; border-radius:15px; text-align:right; margin-bottom:20px;">
+        <div class="form-group"><label>رقم العملية (اختياري)</label><input type="text" id="receiptNumber"></div>
+        <div class="form-group"><label>صورة الإيصال *</label><input type="file" id="receiptImage" accept="image/*" style="padding:10px; background:var(--bg);" onchange="document.getElementById('uploadBtn').click();"></div>
+        <button onclick="uploadReceipt('${pending.id}', '${pending.number}', '${pending.waMsg.replace(/'/g, "\\'")}')" class="btn btn-primary" id="uploadBtn" style="width:100%; margin-top:10px;">تأكيد ورفع الإيصال</button>
+      </div>
+    `;
+  } else if (pending.status === "pending_approval") {
+    contentHtml = `
+      <div style="width:60px; height:60px; background:rgba(59, 130, 246, 0.2); color:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;"><i data-lucide="loader"></i></div>
+      <h2 style="color:#3b82f6; margin-bottom:8px; font-size:22px;">جاري مراجعة الإيصال</h2>
+      <p style="color:var(--text-muted); font-weight:700; font-size:16px; margin-bottom:16px;">رقم الطلب: <b style="color:var(--primary); font-size:20px;">#${pending.number}</b></p>
+      <p style="color:var(--text); margin-bottom:20px; font-size:14px; line-height:1.6;">لقد استلمنا الإيصال الخاص بك، وجاري مراجعته من قبل الإدارة. سيتم التواصل معك قريباً.</p>
+    `;
+  }
+  
+  $("#checkoutContent").innerHTML = `
+    <div style="text-align:center; padding: 20px 0;">
+      ${contentHtml}
+      <button onclick="closeModal('checkoutModal')" class="btn" style="background:var(--bg); color:var(--text); width:100%; font-size:14px; border:1px solid var(--border);">إغلاق</button>
+    </div>
+  `;
+  $("#checkoutModal").classList.add("open");
+  lucide.createIcons();
+};
 
 $("#searchBtn").onclick = () => { $("#searchModal").classList.add("open"); $("#searchInput").focus(); };
 $("#searchInput").oninput = (e) => {
@@ -596,6 +735,25 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   updateCartUI();
   observeReveals();
   lucide.createIcons();
+
+  const pendingOrder = JSON.parse(localStorage.getItem("pending_order"));
+  if (pendingOrder && pendingOrder.status === "pending_approval") {
+    try {
+      const snap = await getDoc(doc(db, "orders", pendingOrder.id));
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data.paymentStatus === "paid") {
+          pendingOrder.status = "approved";
+          localStorage.setItem("pending_order", JSON.stringify(pendingOrder));
+          showToast("تم تأكيد الدفع لطلبك رقم #" + pendingOrder.number, "success");
+        } else if (data.paymentStatus === "rejected") {
+          pendingOrder.status = "pending_receipt"; 
+          localStorage.setItem("pending_order", JSON.stringify(pendingOrder));
+          alert("عذراً، تم رفض إيصال التحويل لطلبك #" + pendingOrder.number + ". يرجى التأكد ورفع إيصال صحيح.");
+        }
+      }
+    } catch(e) { console.log(e); }
+  }
 
   const toggleDrawer = (show) => {
     $("#drawer").classList.toggle("open", show);
@@ -728,7 +886,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   <div class="container about-container">
     <div class="about-text">
       <h2>من نحن</h2>
-      <p>في مزرعة عيال علي، نجمع بين أصالة المزرعة وجودة المنتج. نحن متخصصون في توفير أفضل سلالات المواشي والحيوانات، إلى جانب تجهيز المزارع بأحدث المعدات وأدوات العناية (مثل السقايات وماكينات قص الصوف)، وتوفير الأعلاف المتكاملة. نلتزم بتقديم أسعار تنافسية وخدمة توصيل تغطي جميع المحافظات، لنساعدك على بناء وتطوير مزرعتك بثقة.</p>
+      <p>في مزرعة عيال علي، نجمع بين أصالة المزرعة وجودة المنتج. نحن متخصصون في توفير أفضل سلالات المواشي والحيوانات، إلى جانب تجهيز المزارع بأحدث المعدات وأدوات العناية (مثل السقايات وماكينات قص الصوف)، وتوفير الأعلاف المتكاملة. نلتزم بتقديم أسعار تنافسية وخدمة توصيل تغطي **داخل مصر وخارجها**، لنساعدك على بناء وتطوير مزرعتك بثقة.</p>
     </div>
     <div class="about-image-wrap">
       <img id="aboutLogo" src="" alt="logo">
