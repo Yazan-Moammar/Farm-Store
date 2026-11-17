@@ -279,14 +279,14 @@ const CONFIG = {
   name: "عيال علي فارم", tagline: "كل احتياجات مزرعتك بين يديك",
   whatsapp: "201005666010", logo: "https://i.ibb.co/tpfX3kFj/IMG-20261020-WA0151.jpg",
   facebook: "https://www.facebook.com/share/1DNgqrFAHV/", phone: "+20 10 05666010",
-  currency: "جنيه مصري", instapayNum: "X", vodafoneNum: "X", 
+  currency: "جنيه مصري", instapayNum: "01026746666", vodafoneNum: "01026746666", 
   payments: [
-    { id: "instapay", enabled: true, name: "إنستاباي", instructions: "حوّل المبلغ إلى عنوان InstaPay: XX ثم ارفع صورة إيصال التحويل بالأسفل." },
-    { id: "vodafone", enabled: true, name: "فودافون كاش", instructions: "حوّل المبلغ إلى محفظة فودافون كاش: XX ثم ارفع صورة إيصال التحويل بالأسفل." }
+    { id: "instapay", enabled: true, name: "إنستاباي", instructions: "حوّل المبلغ إلى عنوان InstaPay: 01026746666 ثم ارفع صورة إيصال التحويل بالأسفل." },
+    { id: "vodafone", enabled: true, name: "فودافون كاش", instructions: "حوّل المبلغ إلى محفظة فودافون كاش: 01026746666 ثم ارفع صورة إيصال التحويل بالأسفل." }
   ]
 };
 
-const CATEGORIES = ["الكل", "معدات و أدوات", "حيوانات و مواشي"]; 
+const CATEGORIES = ["الكل", "معدات و أدوات", "حيوانات و مواشي","مستلزمات رحلات وتخييم"]; 
 let PRODUCTS = []; 
 
 const $ = (s) => document.querySelector(s);
@@ -666,7 +666,7 @@ function observeReveals() {
 document.addEventListener("DOMContentLoaded", async ()=>{
   applyConfig();
 
-  // أنيميشن: نضبط العناصر أولاً ثم نشغّل AOS
+
   $$('.section-head, .about-section').forEach(el => { el.classList.remove('reveal'); el.setAttribute('data-aos', 'fade-up'); });
   $$('.pay-card').forEach((el, i) => { el.classList.remove('reveal'); el.setAttribute('data-aos', 'flip-up'); el.setAttribute('data-aos-delay', i * 150); });
   $$('.c-card').forEach((el, i) => { el.classList.remove('reveal'); el.setAttribute('data-aos', 'zoom-in'); el.setAttribute('data-aos-delay', i * 150); });
